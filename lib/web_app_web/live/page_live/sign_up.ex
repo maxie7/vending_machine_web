@@ -1,16 +1,15 @@
-defmodule WebAppWeb.PageLive.Index do
+defmodule WebAppWeb.PageLive.SignUp do
   use WebAppWeb, :live_view
 
   import Phoenix.HTML.Form
 
+  alias WebAppWeb.Api.Client
+
   def mount(_params, _session, socket) do
     form = %{}
-    {
-      :ok,
+    { :ok,
       socket
-      |> save(form)
-      |> validate(form)
-    }
+      |> validate(form) }
   end
 
   def handle_params(_params, _url, socket) do
@@ -21,18 +20,13 @@ defmodule WebAppWeb.PageLive.Index do
     assign(socket, changeset: WebAppWeb.FormData.validate(attrs))
   end
 
-  def save(socket, form) do
-    IO.inspect(form, label: "FORM >>>>>>> ")
-    assign(socket, form_data: form)
-  end
-
   def render(assigns) do
     ~H"""
     <section class="mt-24 w-1/2 shadow flex flex-col items-left mx-auto p-6 bg-white">
       <h1 class="text-4xl font-bold italic text-gray-700">
         Create Account
       </h1>
-      <p class="text-gray-500 font-semibold text-lg mt-6 mb-6 text-left px-8">
+      <p class="text-gray-500 font-semibold text-lg mt-6 mb-6 text-left">
         Sign up to get an account
       </p>
       <%= form_for @changeset, "#", [as: :user, phx_change: :validate, phx_submit: :save], fn f -> %>
@@ -65,6 +59,8 @@ defmodule WebAppWeb.PageLive.Index do
   end
 
   def handle_event("save", %{"user" => form}, socket) do
-    {:noreply, save(socket, form)}
+    Client.create_a_user(form)
+
+    {:noreply, socket}
   end
 end

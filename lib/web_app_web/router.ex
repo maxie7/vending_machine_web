@@ -17,8 +17,12 @@ defmodule WebAppWeb.Router do
   scope "/", WebAppWeb do
     pipe_through :browser
 
-    live "/", PageLive.Index, :index
-    # get "/", PageController, :home
+    live_session :default do
+      live "/", PageLive.LogIn, :log_in
+      live "/products", PageLive.Products, :products
+      live "/sign-up", PageLive.SignUp, :sign_up
+      # get "/", PageController, :home
+    end
   end
 
   # Other scopes may use custom stacks.
