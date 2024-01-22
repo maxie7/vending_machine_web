@@ -27,7 +27,7 @@ defmodule WebAppWeb.PageLive.LogIn do
       <p class="text-gray-500 font-semibold text-lg mt-6 mb-6 text-left">
         Log into your account
       </p>
-      <%= form_for @changeset, "#", [as: :user, phx_change: :validate, phx_submit: :login], fn f -> %>
+      <%= form_for @changeset, "#", [id: "vending-machine", as: :user, phx_change: :validate, phx_submit: :login, phx_hook: "hooks"], fn f -> %>
         <%= label f, :username %>
         <%= text_input f, :username %>
         <%!-- <%= error_tag f, :username %> --%>
@@ -53,14 +53,17 @@ defmodule WebAppWeb.PageLive.LogIn do
 
   def handle_event("login", %{"user" => form}, socket) do
     case Client.sign_in(form) do
-      {:ok, [user, cookie]} ->
-        IO.inspect(user, label: "user >>>>>>>>>>>>>>>>>>>")
-        IO.inspect(cookie, label: "cookie >>>>>>>>>>>>>>>>>>>")
-        # {:noreply, push_patch(socket, to: ~p"/products")}
-        {:noreply, push_redirect(socket |> assign(cookie: cookie), to: "/products")}
+      {:ok, [{:ok, %{"data" => %{"user" => %{"username" => _username}}}}, cookie]} ->
 
-      sam ->
-        IO.inspect(sam, label: "sam >>>>>>>>>>>>>>>>>>>")
+        {
+          :noreply,
+          socket
+          |> assign(cookie: cookie)
+          |> push_event("store", %{key: :cookie, data: cookie})
+          |> push_redirect(to: "/products")
+        }
+
+      _ ->
         {:noreply, socket}
     end
   end

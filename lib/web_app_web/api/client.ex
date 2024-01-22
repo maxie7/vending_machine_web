@@ -43,7 +43,6 @@ defmodule WebAppWeb.Api.Client do
   def get_products() do
     case HTTPoison.get!(@base_url <> "products", @headers) do
       %HTTPoison.Response{status_code: 200, body: resp_body} ->
-        IO.inspect(resp_body, label: "products >>>>>>>>>>>>>>>>>>>")
         {:ok, Jason.decode(resp_body)}
 
       %HTTPoison.Response{status_code: status_code} when status_code > 399 ->

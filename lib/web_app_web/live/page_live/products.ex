@@ -5,15 +5,14 @@ defmodule WebAppWeb.PageLive.Products do
 
   alias WebAppWeb.Api.Client
 
-  def mount(_params, session, socket) do
-    IO.inspect session, label: "session >>>>>>>>>>>>>>>>>>>"
-    IO.inspect socket, label: "socket >>>>>>>>>>>>>>>>>>>"
-    Client.get_products()
-    { :ok, socket}
-  end
-
   def handle_params(_params, _url, socket) do
-    {:noreply, socket}
+    new_socket =
+      socket
+      |> assign(cookie: "")
+      |> push_event("restore", %{key: :cookie})
+
+    Client.get_products()
+    {:noreply, new_socket}
   end
 
   def validate(socket, attrs) do
@@ -39,7 +38,6 @@ defmodule WebAppWeb.PageLive.Products do
 
   def handle_event("save", %{"user" => _form}, socket) do
     # Client.sign_in(form)
-
     {:noreply, socket}
   end
 end
