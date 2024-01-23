@@ -21,15 +21,17 @@ import "phoenix_html";
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
-import hooks from "./hooks/local_state_store";
+import * as LocalStateStore from "./hooks/local_state_store";
 
-let hooks = { hooks };
+let storeToC = {};
+storeToC.LocalStateStore = LocalStateStore.storageHooks;
+
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
 let liveSocket = new LiveSocket("/live", Socket, {
   params: { _csrf_token: csrfToken },
-  hooks: hooks,
+  hooks: storeToC,
 });
 
 // Show progress bar on live navigation and form submits

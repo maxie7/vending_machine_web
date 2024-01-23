@@ -5,39 +5,48 @@ defmodule WebAppWeb.PageLive.Products do
 
   alias WebAppWeb.Api.Client
 
-  def handle_params(_params, _url, socket) do
+  def handle_params(_params, _session, socket) do
     new_socket =
       socket
-      |> assign(cookie: "")
-      |> push_event("restore", %{key: :cookie})
+      |> assign(products: [])
+      |> push_event("restore", %{key: "cookie", event: "restoreSettings"})
 
-    Client.get_products()
     {:noreply, new_socket}
   end
 
-  def validate(socket, attrs) do
-    assign(socket, changeset: WebAppWeb.FormData.validate(attrs))
+  def handle_event("restoreSettings", params, socket) do
+    case Client.get_products(params) do
+      {:ok, {:ok, %{"data" => products}}} ->
+        {:noreply, assign(socket, products: products)}
+      _ ->
+        {:noreply, socket}
+    end
   end
 
   def render(assigns) do
     ~H"""
-    <section class="mt-12 w-1/2 shadow flex flex-col items-left mx-auto p-6 bg-white">
+    <section
+      class="mt-12 w-1/2 shadow flex flex-col items-left mx-auto p-6 bg-white"
+      id="vending-machine"
+      phx-hook="LocalStateStore"
+    >
       <h1 class="text-4xl font-bold italic text-gray-700">
         Vending Machine
       </h1>
       <p class="text-gray-500 font-semibold text-lg mt-6 mb-6 text-left">
         List of Products to Buy
       </p>
+        <%= if @products != [] do %>
+        <div>
+          <%= for product <- @products do %>
+            <div>
+              <%= product["product_name"] %>
+            </div>
+          <% end %>
+        </div>
+        <% end %>
+
     </section>
     """
-  end
-
-  def handle_event("validate", %{"user" => form}, socket) do
-    {:noreply, validate(socket, form)}
-  end
-
-  def handle_event("save", %{"user" => _form}, socket) do
-    # Client.sign_in(form)
-    {:noreply, socket}
   end
 end

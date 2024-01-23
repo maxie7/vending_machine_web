@@ -40,8 +40,9 @@ defmodule WebAppWeb.Api.Client do
     end
   end
 
-  def get_products() do
-    case HTTPoison.get!(@base_url <> "products", @headers) do
+  def get_products(cookie) do
+    headers = [{"Cookie", cookie} | @headers]
+    case HTTPoison.get!(@base_url <> "products", headers) do
       %HTTPoison.Response{status_code: 200, body: resp_body} ->
         {:ok, Jason.decode(resp_body)}
 

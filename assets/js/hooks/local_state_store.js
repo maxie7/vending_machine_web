@@ -1,6 +1,6 @@
 // JS Hook for storing some state in sessionStorage in the browser.
 // The server requests stored data and clears it when requested.
-const hooks = {
+export const storageHooks = {
   mounted() {
     this.handleEvent("store", (obj) => this.store(obj));
     this.handleEvent("clear", (obj) => this.clear(obj));
@@ -12,7 +12,6 @@ const hooks = {
   },
 
   restore(obj) {
-    console.log("restore obj", obj);
     var data = sessionStorage.getItem(obj.key);
     this.pushEvent(obj.event, data);
   },
@@ -21,5 +20,3 @@ const hooks = {
     sessionStorage.removeItem(obj.key);
   },
 };
-
-export default Hooks;

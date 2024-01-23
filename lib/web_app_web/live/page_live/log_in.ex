@@ -20,14 +20,18 @@ defmodule WebAppWeb.PageLive.LogIn do
 
   def render(assigns) do
     ~H"""
-    <section class="mt-24 w-1/2 shadow flex flex-col items-left mx-auto p-6 bg-white">
+    <section
+      class="mt-24 w-1/2 shadow flex flex-col items-left mx-auto p-6 bg-white"
+      id="vending-machine"
+      phx-hook="LocalStateStore"
+    >
       <h1 class="text-4xl font-bold italic text-gray-700">
         Log In
       </h1>
       <p class="text-gray-500 font-semibold text-lg mt-6 mb-6 text-left">
         Log into your account
       </p>
-      <%= form_for @changeset, "#", [id: "vending-machine", as: :user, phx_change: :validate, phx_submit: :login, phx_hook: "hooks"], fn f -> %>
+      <%= form_for @changeset, "#", [as: :user, phx_change: :validate, phx_submit: :login], fn f -> %>
         <%= label f, :username %>
         <%= text_input f, :username %>
         <%!-- <%= error_tag f, :username %> --%>
