@@ -64,7 +64,7 @@ defmodule WebAppWeb.PageLive.LogIn do
           socket
           |> assign(cookie: cookie)
           |> push_event("store", %{key: :cookie, data: cookie})
-          |> push_redirect(to: "/products")
+          |> push_redirect(to: "/")
         }
 
       _ ->

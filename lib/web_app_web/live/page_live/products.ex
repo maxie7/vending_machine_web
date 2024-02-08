@@ -14,12 +14,16 @@ defmodule WebAppWeb.PageLive.Products do
     {:noreply, new_socket}
   end
 
+  def handle_event("restoreSettings", nil, socket) do
+    {:noreply, socket |> push_redirect(to: "/login") }
+  end
+
   def handle_event("restoreSettings", params, socket) do
     case Client.get_products(params) do
       {:ok, {:ok, %{"data" => products}}} ->
         {:noreply, assign(socket, products: products)}
       _ ->
-        {:noreply, socket}
+        {:noreply, socket |> push_redirect(to: "/login")}
     end
   end
 
@@ -30,7 +34,7 @@ defmodule WebAppWeb.PageLive.Products do
       id="vending-machine"
       phx-hook="LocalStateStore"
     >
-      <h1 class="text-4xl font-bold italic text-gray-700">
+      <h1 class="text-4xl font-bold text-gray-700">
         Vending Machine
       </h1>
       <p class="text-gray-500 font-semibold text-lg mt-6 mb-6 text-left">
@@ -38,14 +42,26 @@ defmodule WebAppWeb.PageLive.Products do
       </p>
         <%= if @products != [] do %>
         <div>
-          <%= for product <- @products do %>
-            <div>
-              <%= product["product_name"] %>
-            </div>
-          <% end %>
+          <table class="table-auto">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Cost</th>
+                <th>Available Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%= for product <- @products do %>
+                <tr>
+                  <td><%= product["product_name"] %></td>
+                  <td><%= product["cost"] %></td>
+                  <td><%= product["amount_available"] %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
         </div>
         <% end %>
-
     </section>
     """
   end

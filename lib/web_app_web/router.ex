@@ -18,8 +18,8 @@ defmodule WebAppWeb.Router do
     pipe_through :browser
 
     live_session :default do
-      live "/", PageLive.LogIn, :log_in
-      live "/products", PageLive.Products, :products
+      live "/", PageLive.Products, :products
+      live "/login", PageLive.LogIn, :log_in
       live "/sign-up", PageLive.SignUp, :sign_up
       # get "/", PageController, :home
     end
